@@ -162,6 +162,53 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .tally-row span:last-child{font-family:var(--f-num);color:var(--ink)}
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 .cta-wrap{margin-top:22px}
+/* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
+@media (min-width:821px){
+  .hud{padding:12px}
+  .hud-cell{padding:7px 10px;border-radius:11px}
+  .hud-label{font-size:13px}
+  .hud-value{font-size:28px}
+}
+/* 手機：文字整體再放大一輪，垃圾/動物尺寸已在 JS 用 OBJ_SCALE 放大 */
+@media (max-width:820px){
+  .brand{font-size:13px}
+  .eyebrow{font-size:13px}
+  .lede{font-size:17px}
+  .rule{font-size:16px}
+  .btn{font-size:19px}
+  .btn.fb{font-size:17px}
+  .btn.ghost{font-size:16px}
+  .disclaim{font-size:12.5px}
+  .res-kicker{font-size:14px}
+  .res-big{font-size:74px}
+  .res-unit{font-size:17px}
+  .ratio{font-size:14px}
+  .card.punch h3{font-size:23px}
+  .card.punch p{font-size:16px}
+  .card.punch .rate{font-size:14px}
+  .card.egg h3{font-size:22px}
+  .card.egg p{font-size:16px}
+  .weigh-h{font-size:13.5px}
+  .wl{font-size:16px}
+  .wl .src{font-size:13.5px}
+  .wl .out{font-size:20px}
+  .wl.total .out{font-size:21px}
+  .wl .foot{font-size:13.5px}
+  .mg{font-size:14.5px}
+  .mg b{font-size:16px}
+  .sec-h{font-size:14px}
+  .bar-row{font-size:14px}
+  .bar-name{width:112px;flex:0 0 112px}
+  .bar-pct{font-size:12.5px}
+  .fact{font-size:16px}
+  .tally-h{font-size:13px}
+  .tally-row{font-size:15px}
+  .credit{font-size:12.5px}
+  .hud-label{font-size:11.5px}
+  .hud-value{font-size:22px}
+  .evt-toast{font-size:16px}
+  .hint-toast{font-size:14.5px}
+}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms !important}}
 </style>
 </head>
@@ -300,6 +347,15 @@ const TOTAL=TYPES.reduce((s,t)=>s+t.pct,0);
 const CRITTERS=[{k:'fish',name:'魚',hit:47,size:66},{k:'crab',name:'螃蟹',hit:47,size:66},
                 {k:'egret',name:'白鷺鷥',hit:60,size:80}];
 const LINES=['不然咧','我等一下會撿','風吹走的','就一個而已','下面有人在撿啊','垃圾桶太遠了'];
+
+// ---- 裝置偵測：桌機的垃圾/動物縮小，手機再放大一點；文字比照辦理 ----
+const IS_MOBILE=window.matchMedia('(max-width:820px)').matches||window.matchMedia('(pointer:coarse)').matches;
+const OBJ_SCALE=IS_MOBILE?1.15:0.68;     // 上面 TYPES/SPAWNED/CRITTERS 的數值是以手機為基準微調的
+const TXT_SCALE=IS_MOBILE?1.12:1;        // 畫布內文字（GO、+1、揭曉標題等）
+document.body.classList.add(IS_MOBILE?'is-mobile':'is-desktop');
+[...TYPES,...Object.values(SPAWNED),...CRITTERS].forEach(t=>{
+  t.hit=Math.round(t.hit*OBJ_SCALE);t.size=Math.round(t.size*OBJ_SCALE);
+});
 
 /* ---- DOM ---- */
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
@@ -460,7 +516,7 @@ function drawGuy(){
   ctx.beginPath();ctx.moveTo(-6,-18);ctx.lineTo(-6+Math.cos(a)*15,-18+Math.sin(a)*15);ctx.stroke();
   ctx.restore();
   if(GUY.sayT>0){
-    ctx.font='700 12px "Noto Sans TC",sans-serif';ctx.textAlign='center';
+    ctx.font='700 '+Math.round(12*TXT_SCALE)+'px "Noto Sans TC",sans-serif';ctx.textAlign='center';
     const w=ctx.measureText(GUY.say).width+18,bx=Math.min(GUY.x,W-w/2-6);
     ctx.fillStyle='rgba(255,255,255,.96)';rr(bx-w/2,GUY.y+26,w,22,6);ctx.fill();
     ctx.beginPath();ctx.moveTo(bx-4,GUY.y+26);ctx.lineTo(bx+4,GUY.y+26);ctx.lineTo(bx,GUY.y+20);ctx.fill();
@@ -787,7 +843,7 @@ function loop(ts){
   for(let i=pops.length-1;i>=0;i--){const p=pops[i];p.t+=dt;
     if(p.t>.6){pops.splice(i,1);continue;}
     ctx.globalAlpha=1-p.t/.6;ctx.fillStyle='#FFFFFF';
-    ctx.font='700 15px "Space Mono",monospace';ctx.textAlign='center';
+    ctx.font='700 '+Math.round(15*TXT_SCALE)+'px "Space Mono",monospace';ctx.textAlign='center';
     ctx.fillText('+1',p.x,p.y-14-p.t*24);ctx.globalAlpha=1;}
 
   // 倒數
@@ -800,9 +856,9 @@ function loop(ts){
     ctx.globalAlpha=REDUCED?1:Math.max(.15,1-step*.75);
     ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,58,0,6.3);ctx.stroke();
     ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.font='700 74px "Space Mono",monospace';ctx.fillText(n>0?String(n):'GO',0,4);
+    ctx.font='700 '+Math.round(74*TXT_SCALE)+'px "Space Mono",monospace';ctx.fillText(n>0?String(n):'GO',0,4);
     ctx.restore();ctx.globalAlpha=1;ctx.textBaseline='alphabetic';
-    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='700 15px "Noto Sans TC",sans-serif';
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='700 '+Math.round(15*TXT_SCALE)+'px "Noto Sans TC",sans-serif';
     ctx.fillText(n>0?'他已經開始丟了':'撿吧',W/2,H/2+82);
     if(cdT>=3.6){state='play';lastT=ts;lastBeep=99;startedAt=Date.now();}
   }
@@ -821,8 +877,8 @@ function loop(ts){
     if(revealT>.25){
       ctx.globalAlpha=Math.min((revealT-.25)/.4,1);
       ctx.fillStyle='#fff';ctx.textAlign='center';
-      ctx.font='900 26px "Noto Serif TC",serif';ctx.fillText('這些，你沒撿到',W/2,104);
-      ctx.font='400 13px "Noto Sans TC",sans-serif';ctx.fillStyle='#FFD79B';
+      ctx.font='900 '+Math.round(26*TXT_SCALE)+'px "Noto Serif TC",serif';ctx.fillText('這些，你沒撿到',W/2,104);
+      ctx.font='400 '+Math.round(13*TXT_SCALE)+'px "Noto Sans TC",sans-serif';ctx.fillStyle='#FFD79B';
       ctx.fillText('它們已經漂進烏溪，往出海口去了',W/2,130);
       ctx.globalAlpha=1;
     }

@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>筏子溪淨溪大作戰</title>
+<title>60 秒筏子溪淨溪挑戰｜荒野保護協會台中分會</title>
+<meta name="description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="荒野保護協會台中分會">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="60 秒筏子溪淨溪挑戰">
+<meta property="og:description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
+<meta property="og:url" content="https://annycyt.github.io/river-game/">
+<meta property="og:image" content="https://annycyt.github.io/river-game/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="60 秒筏子溪淨溪挑戰，溪水中漂著寶特瓶、塑膠袋與菸蒂">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="60 秒筏子溪淨溪挑戰">
+<meta name="twitter:description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
+<meta name="twitter:image" content="https://annycyt.github.io/river-game/share-card.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
@@ -162,6 +177,8 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .tally-row span:last-child{font-family:var(--f-num);color:var(--ink)}
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 .cta-wrap{margin-top:22px}
+.desktop-only{display:none}
+body.is-desktop .desktop-only{display:block}
 /* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
 @media (min-width:821px){
   .hud{padding:12px}
@@ -301,6 +318,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
       <button class="btn" id="btnAgain">再玩一次</button>
       <a class="btn fb" id="btnFb" href="https://www.facebook.com/sowfuzzyriver/?locale=zh_TW" target="_blank" rel="noopener">追蹤荒野筏子溪平台</a>
       <button class="btn ghost" id="btnShare">分享我的成績</button>
+      <button class="btn ghost desktop-only" id="btnCopyUrl">複製遊戲網址</button>
     </div>
     <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
   </div>
@@ -314,7 +332,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
    設定區：這兩行填好就生效
    ============================================================ */
 const BGM_URL='';        // 背景音樂檔網址（留空 = 不放音樂）
-const TRACK_URL='https://script.google.com/macros/s/AKfycbxy6MQiw4QqnHzgJ1MobNjCCtPDOP5nU6NS0WHA1fBC4EKhZqpcUmWhUTN7HIXGMW-J/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
+const TRACK_URL='https://script.google.com/macros/s/AKfycbxcRaw-oKs-Lk9Fi8-839WMJzMLMqH4neuBNAvb40XwX6vRfsHfvd51Q2z9V4p-15Cb/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
 const GAME_URL='https://annycyt.github.io/river-game/';  // 遊戲本身的網址，會放進分享文案
 /* ============================================================ */
 
@@ -431,20 +449,49 @@ btnBgm.addEventListener('click',()=>{const v=!AudioKit.getBgm();AudioKit.setBgm(
    後台追蹤：POST 到 Google Apps Script
    ============================================================ */
 const SESSION=(Date.now().toString(36)+Math.random().toString(36).slice(2,8));
-// 地區：用瀏覽器時區與語言推得，不需權限、不叫出任何提示框、不經第三方、不碰 IP
-const REGION=(function(){
-  try{
-    const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
-    return tz||'unknown';
-  }catch(e){return 'unknown';}
+
+// 裝置類型：細分到 iOS / Android / Windows / Mac / Linux，並區分手機、平板、電腦
+const DEVICE=(function(){
+  const u=navigator.userAgent,p=navigator.platform||'';
+  const touch=(navigator.maxTouchPoints||0)>1;
+  if(/iPhone/i.test(u))return 'iPhone (iOS)';
+  if(/iPad/i.test(u)||(/Macintosh/i.test(u)&&touch))return 'iPad (iPadOS)';
+  if(/Android/i.test(u))return /Mobile/i.test(u)?'Android 手機':'Android 平板';
+  if(/Windows/i.test(u))return 'Windows 電腦';
+  if(/Macintosh|Mac OS X/i.test(u))return 'Mac 電腦';
+  if(/CrOS/i.test(u))return 'ChromeOS 電腦';
+  if(/Linux/i.test(u)||/Linux/i.test(p))return 'Linux 電腦';
+  return '其他';
 })();
+
+// 地區：先用瀏覽器時區（不需權限、不叫提示框），再向 IP 定位服務補上城市
+const TZ=(function(){
+  try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'unknown';}catch(e){return 'unknown';}
+})();
+let CITY='',COUNTRY='';
+(function lookupCity(){
+  // 依序嘗試，任何一個成功就停；全部失敗就只留時區，不影響遊戲
+  const apis=['https://ipwho.is/','https://get.geojs.io/v1/ip/geo.json','https://ipapi.co/json/'];
+  let i=0;
+  (function next(){
+    if(i>=apis.length)return;
+    const url=apis[i++];
+    fetch(url,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+      CITY=d.city||d.region||'';
+      COUNTRY=d.country||d.country_name||d.country_code||'';
+      if(!CITY)next();
+    }).catch(()=>next());
+  })();
+})();
+
 function track(event,payload){
   if(!TRACK_URL)return;
   const body=Object.assign({
     event:event,session:SESSION,ts:new Date().toISOString(),
-    device:/iPad|Tablet/i.test(navigator.userAgent)?'tablet':
-           (/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop'),
-    region:REGION,
+    device:DEVICE,
+    region:TZ,
+    city:CITY,
+    country:COUNTRY,
     lang:navigator.language||'',
     ref:(function(){try{return document.referrer||'direct';}catch(e){return'direct';}})()
   },payload||{});
@@ -1042,10 +1089,18 @@ document.getElementById('btnFb').addEventListener('click',()=>track('click_fb',{
 document.getElementById('btnShare').addEventListener('click',async function(){
   const b=this;track('click_share',{picked:mine});
   try{
-    if(navigator.share){await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody});return;}
+    // 桌機沒有原生分享面板，直接複製成績文字
+    if(navigator.share&&IS_MOBILE){await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody});return;}
     await navigator.clipboard.writeText(shareTxt);
-    b.textContent='已複製，貼上就能發文';setTimeout(()=>b.textContent='分享我的成績',2200);
+    b.textContent='已複製成績，貼上就能發文';setTimeout(()=>b.textContent='分享我的成績',2200);
   }catch(err){b.textContent='複製失敗，請長按選取';setTimeout(()=>b.textContent='分享我的成績',2200);}
+});
+document.getElementById('btnCopyUrl').addEventListener('click',async function(){
+  const b=this;track('click_copy_url',{});
+  try{
+    await navigator.clipboard.writeText(GAME_URL);
+    b.textContent='網址已複製 ✓';setTimeout(()=>b.textContent='複製遊戲網址',2200);
+  }catch(err){b.textContent='複製失敗，請手動選取網址';setTimeout(()=>b.textContent='複製遊戲網址',2200);}
 });
 window.addEventListener('pagehide',()=>{
   if(state==='play')track('abandon',{picked:mine,thrown:theirs,

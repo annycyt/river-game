@@ -162,9 +162,10 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
   overflow:hidden;position:relative}
 .bar-fill{height:100%;background:var(--water);width:0;transition:width .7s cubic-bezier(.2,.7,.3,1)}
 .bar-row.top .bar-fill{background:var(--amber)}
-.bar-num{position:absolute;top:0;right:9px;height:100%;display:flex;align-items:center;
-  font-family:var(--f-num);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em}
-.bar-num.inside{color:#fff}
+.bar-num{position:absolute;top:50%;right:6px;transform:translateY(-50%);
+  font-family:var(--f-num);font-size:12.5px;font-weight:700;color:var(--ink);letter-spacing:.02em;
+  background:rgba(255,255,255,.92);padding:2px 7px;border-radius:99px;
+  box-shadow:0 1px 3px rgba(18,58,51,.18)}
 .bar-row.top .bar-name{color:var(--ink);font-weight:700}
 .bar-pct{width:52px;flex:0 0 52px;font-family:var(--f-num);color:var(--ink3);font-size:11.5px;
   text-align:right}
@@ -258,7 +259,7 @@ body.is-mobile .mobile-only{display:block}
 
   <div class="audio-btns" id="audioBtns" hidden>
     <button class="abtn" id="btnSfx" title="音效">🔊</button>
-    <button class="abtn off" id="btnBgm" title="音樂">♪</button>
+    <button class="abtn" id="btnBgm" title="音樂">♪</button>
   </div>
 
   <div class="evt-toast" id="evtToast"></div>
@@ -405,7 +406,7 @@ new ResizeObserver(fit).observe(cv);fit();
    音效：Web Audio 即時合成，零音檔零授權
    ============================================================ */
 const AudioKit=(function(){
-  let ac=null,sfxOn=true,bgm=null,bgmOn=false,rainSrc=null,rainGain=null;
+  let ac=null,sfxOn=true,bgm=null,bgmOn=true,rainSrc=null,rainGain=null;
   function ctxOn(){
     if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
     if(ac.state==='suspended')ac.resume();
@@ -1119,7 +1120,7 @@ function showResult(){
     chart.innerHTML=TYPES.map((t,i)=>'<div class="bar-row'+(i===0?' top':'')+'">'+
       '<div class="bar-name">'+t.name+'</div><div class="bar-track">'+
       '<div class="bar-fill" data-w="'+(t.pct/(29.67*1.15)*100)+'"></div>'+
-      '<div class="bar-num'+(t.pct/(29.67*1.15)*100>=55?' inside':'')+'">'+t.real.toLocaleString()+'</div></div>'+
+      '<div class="bar-num">'+t.real.toLocaleString()+'</div></div>'+
       '<div class="bar-pct">'+t.pct.toFixed(2)+'%</div></div>').join('');
     chart.dataset.built='1';
   }

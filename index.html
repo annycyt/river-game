@@ -158,11 +158,16 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .sec-h{font-size:13px;letter-spacing:.14em;color:var(--grass);font-weight:700;margin:24px 0 10px}
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:13px}
 .bar-name{width:104px;flex:0 0 104px;color:var(--ink2);text-align:right;line-height:1.3}
-.bar-track{flex:1;height:15px;background:#fff;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.bar-track{flex:1;height:24px;background:#fff;border:1px solid var(--line);border-radius:6px;
+  overflow:hidden;position:relative}
 .bar-fill{height:100%;background:var(--water);width:0;transition:width .7s cubic-bezier(.2,.7,.3,1)}
 .bar-row.top .bar-fill{background:var(--amber)}
+.bar-num{position:absolute;top:0;right:9px;height:100%;display:flex;align-items:center;
+  font-family:var(--f-num);font-size:13px;font-weight:700;color:var(--ink);letter-spacing:.02em}
+.bar-num.inside{color:#fff}
 .bar-row.top .bar-name{color:var(--ink);font-weight:700}
-.bar-pct{width:50px;flex:0 0 50px;font-family:var(--f-num);color:var(--ink3);font-size:11.5px}
+.bar-pct{width:52px;flex:0 0 52px;font-family:var(--f-num);color:var(--ink3);font-size:11.5px;
+  text-align:right}
 
 .fact{border-left:3px solid var(--grass);padding:2px 0 2px 12px;margin-bottom:14px;
   font-size:15px;line-height:1.8;color:var(--ink2)}
@@ -175,10 +180,14 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
   border-bottom:1px dashed var(--line)}
 .tally-row:last-child{border-bottom:0}
 .tally-row span:last-child{font-family:var(--f-num);color:var(--ink)}
+.tally-note{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
+  font-size:12.5px;line-height:1.7;color:var(--ink2)}
+.tally-note b{color:var(--ink);font-weight:700}
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 .cta-wrap{margin-top:22px}
-.desktop-only{display:none}
+.desktop-only,.mobile-only{display:none}
 body.is-desktop .desktop-only{display:block}
+body.is-mobile .mobile-only{display:block}
 /* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
 @media (min-width:821px){
   .hud{padding:12px}
@@ -220,9 +229,11 @@ body.is-desktop .desktop-only{display:block}
   .bar-row{font-size:14px}
   .bar-name{width:112px;flex:0 0 112px}
   .bar-pct{font-size:12.5px}
+  .bar-num{font-size:14px}
   .fact{font-size:16px}
   .tally-h{font-size:13px}
   .tally-row{font-size:15px}
+  .tally-note{font-size:14px}
   .credit{font-size:12.5px}
   .hud-label{font-size:11.5px}
   .hud-value{font-size:22px}
@@ -268,7 +279,8 @@ body.is-desktop .desktop-only{display:block}
 
     <div class="spacer"></div>
     <button class="btn" id="btnStart">開始淨溪</button>
-    <div class="disclaim">遊戲情節純屬誇張。真實的筏子溪比較安靜，垃圾比較多。</div>
+    <div class="disclaim">遊戲情節純屬誇張。真實的筏子溪比較安靜，垃圾比較多。<br>
+      我們會記錄匿名的遊玩統計，幫助改進這個遊戲。不含任何個人資料。</div>
   </div>
 
   <!-- 結算 -->
@@ -303,24 +315,25 @@ body.is-desktop .desktop-only{display:block}
     <div id="realChart"></div>
 
     <div class="sec-h">說點正經的</div>
-    <div class="fact">菸蒂 <b>86,000 支、30.27%</b>，是第二名的兩倍多。它的濾嘴不是棉花，是醋酸纖維——一種塑膠，不會分解，只會碎成塑膠微粒。</div>
-    <div class="fact">第 2 到第 5 名全是一次性餐飲用品，<b>合計 43.60%</b>。遊戲裡塑膠袋會掉出東西、杯子分成三件，那不是亂編的，是真的很難撿。</div>
-    <div class="fact key">六年半、197 場、13,401 人次，撿回 22.60 公噸——溪裡的垃圾還是那麼多。因為<b>撿是末端，源頭減量與重複使用才是解方</b>。<br>自備杯袋餐具、選可重複填充的、修好再用、拒絕用不到的贈品、菸蒂隨身帶走。<b>沒有被製造出來的垃圾，才不需要有人蹲在河灘上撿。</b></div>
+    <div class="fact">菸蒂 <b>88,279 支、29.67%</b>，是第二名的兩倍多。它的濾嘴不是棉花，是醋酸纖維——一種塑膠，不會分解，只會碎成塑膠微粒。</div>
+    <div class="fact">第 2 到第 5 名全是一次性餐飲用品，<b>合計 44.25%</b>。遊戲裡塑膠袋會掉出東西、杯子分成三件，那不是亂編的，是真的很難撿。</div>
+    <div class="fact key">七年多、210 場、14,118 人次，撿回 23.92 公噸——溪裡的垃圾還是那麼多。因為<b>撿是末端，源頭減量與重複使用才是解方</b>。<br>自備杯袋餐具、選可重複填充的、修好再用、拒絕用不到的贈品、菸蒂隨身帶走。<b>沒有被製造出來的垃圾，才不需要有人蹲在河灘上撿。</b></div>
 
     <div class="tally">
-      <div class="tally-h">2019 年 6 月 – 2025 年 12 月 累計成果</div>
-      <div class="tally-row"><span>執行場次</span><span>197 場</span></div>
-      <div class="tally-row"><span>累計重量</span><span>22.60 公噸</span></div>
-      <div class="tally-row"><span>淨溪人數</span><span>13,401 人次</span></div>
+      <div class="tally-h">2019 年 6 月 – 2026 年 8 月 累計成果</div>
+      <div class="tally-row"><span>執行場次</span><span>210 場</span></div>
+      <div class="tally-row"><span>累計重量</span><span>23.92 公噸</span></div>
+      <div class="tally-row"><span>淨溪人數</span><span>14,118 人次</span></div>
+      <div class="tally-note">23.92 公噸，相當於 <b>4 頭成年非洲象</b>、<b>16 台小客車</b>，或 <b>368 個成年人</b>的體重加起來。</div>
     </div>
 
     <div class="cta-wrap">
       <button class="btn" id="btnAgain">再玩一次</button>
       <a class="btn fb" id="btnFb" href="https://www.facebook.com/sowfuzzyriver/?locale=zh_TW" target="_blank" rel="noopener">追蹤荒野筏子溪平台</a>
-      <button class="btn ghost" id="btnShare">分享我的成績</button>
+      <button class="btn ghost mobile-only" id="btnShare">分享我的成績</button>
       <button class="btn ghost desktop-only" id="btnCopyUrl">複製遊戲網址</button>
     </div>
-    <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
+    <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>背景音樂：Cheer up (PSG Version) by Snabisch，CC BY 3.0，取自 OpenGameArt.org<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
   </div>
 </div>
 
@@ -331,8 +344,8 @@ body.is-desktop .desktop-only{display:block}
 /* ============================================================
    設定區：這兩行填好就生效
    ============================================================ */
-const BGM_URL='';        // 背景音樂檔網址（留空 = 不放音樂）
-const TRACK_URL='https://script.google.com/macros/s/AKfycbxcRaw-oKs-Lk9Fi8-839WMJzMLMqH4neuBNAvb40XwX6vRfsHfvd51Q2z9V4p-15Cb/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
+const BGM_URL='bgm.mp3';        // 背景音樂檔網址（留空 = 不放音樂）
+const TRACK_URL='https://script.google.com/macros/s/AKfycbxy6MQiw4QqnHzgJ1MobNjCCtPDOP5nU6NS0WHA1fBC4EKhZqpcUmWhUTN7HIXGMW-J/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
 const GAME_URL='https://annycyt.github.io/river-game/';  // 遊戲本身的網址，會放進分享文案
 /* ============================================================ */
 
@@ -342,16 +355,16 @@ const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const GUY={x:340,y:116,arm:0,say:'',sayT:0};   // 右上角那個人（在 HUD 下方、對岸草地上）
 
 const TYPES=[
- {k:'butt',   name:'菸蒂',             pct:30.27,hit:34,size:31},
- {k:'wrap',   name:'食品包裝袋',       pct:13.89,hit:47,size:58},
- {k:'utensil',name:'免洗餐具',         pct:10.55,hit:46,size:58},
- {k:'pet',    name:'寶特瓶',           pct: 9.74,hit:51,size:66},
- {k:'bag',    name:'塑膠提袋',         pct: 9.42,hit:51,size:66},
- {k:'cup',    name:'外帶飲料杯',       pct: 5.21,hit:47,size:58},
- {k:'straw',  name:'吸管',             pct: 4.02,hit:39,size:58},
- {k:'glass',  name:'玻璃瓶',           pct: 3.06,hit:47,size:62},
- {k:'can',    name:'鐵鋁罐',           pct: 2.90,hit:46,size:51},
- {k:'other',  name:'其他容器',         pct: 2.34,hit:47,size:55}
+ {k:'butt',   name:'菸蒂',             pct:29.67,real:88279,hit:34,size:31},
+ {k:'wrap',   name:'食品包裝袋',       pct:14.10,real:41957,hit:47,size:58},
+ {k:'utensil',name:'免洗餐具',         pct:10.62,real:31585,hit:46,size:58},
+ {k:'pet',    name:'寶特瓶',           pct: 9.82,real:29218,hit:51,size:66},
+ {k:'bag',    name:'塑膠提袋',         pct: 9.71,real:28879,hit:51,size:66},
+ {k:'cup',    name:'外帶飲料杯',       pct: 5.22,real:15542,hit:47,size:58},
+ {k:'straw',  name:'吸管',             pct: 3.94,real:11728,hit:39,size:58},
+ {k:'glass',  name:'玻璃瓶',           pct: 3.02,real: 8996,hit:47,size:62},
+ {k:'can',    name:'鐵鋁罐',           pct: 2.91,real: 8666,hit:46,size:51},
+ {k:'other',  name:'其他容器',         pct: 2.36,real: 7019,hit:47,size:55}
 ];
 const SPAWNED={
   cap:  {k:'cap',  name:'瓶蓋',    hit:28,size:26},
@@ -379,7 +392,7 @@ document.body.classList.add(IS_MOBILE?'is-mobile':'is-desktop');
 });
 
 /* ---- DOM ---- */
-const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const cv=document.getElementById('cv');let ctx=cv.getContext('2d');
 const hud=document.getElementById('hud'),audioBtns=document.getElementById('audioBtns');
 const evtToast=document.getElementById('evtToast'),hintToast=document.getElementById('hintToast');
 const vTime=document.getElementById('vTime'),vMine=document.getElementById('vMine'),vTheirs=document.getElementById('vTheirs');
@@ -471,16 +484,21 @@ const TZ=(function(){
 let CITY='',COUNTRY='';
 (function lookupCity(){
   // 依序嘗試，任何一個成功就停；全部失敗就只留時區，不影響遊戲
+  // 每個服務最多等 4 秒，避免對方沒回應時一路卡住
   const apis=['https://ipwho.is/','https://get.geojs.io/v1/ip/geo.json','https://ipapi.co/json/'];
   let i=0;
   (function next(){
     if(i>=apis.length)return;
     const url=apis[i++];
-    fetch(url,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
-      CITY=d.city||d.region||'';
-      COUNTRY=d.country||d.country_name||d.country_code||'';
-      if(!CITY)next();
-    }).catch(()=>next());
+    const ac=(typeof AbortController!=='undefined')?new AbortController():null;
+    const timer=ac?setTimeout(()=>ac.abort(),4000):null;
+    fetch(url,{cache:'no-store',signal:ac?ac.signal:undefined})
+      .then(r=>{clearTimeout(timer);return r.ok?r.json():Promise.reject();})
+      .then(d=>{
+        CITY=String(d.city||d.region||'').slice(0,60);
+        COUNTRY=String(d.country||d.country_name||d.country_code||'').slice(0,60);
+        if(!CITY)next();
+      }).catch(()=>{clearTimeout(timer);next();});
   })();
 })();
 
@@ -948,12 +966,12 @@ function absurd(p,gotG,mine,kg,bottles){
   const butts=(p.butt||0);
   add(butts,'菸蒂 '+butts+' 支',
       '頭尾接起來 '+len(butts*9.8),
-      '一支菸蒂長 9.8 公分。筏子溪累計 86,000 支，接起來 8.4 公里。');
+      '一支菸蒂長 9.8 公分。筏子溪累計 88,279 支，接起來 8.7 公里。');
 
   const pets=(p.pet||0)+(p.cap||0)*0;
   add(pets,'寶特瓶 '+pets+' 個',
       '疊起來 '+len(pets*22)+' 高',
-      '一個瓶子高 22 公分。累計 27,701 個，等於 12 座台北 101。');
+      '一個瓶子高 22 公分。累計 29,218 個，等於 12.7 座台北 101。');
 
   const straws=(p.straw||0)+Math.floor((p.half||0)/2);
   add(straws,'吸管 '+straws+' 支',
@@ -963,17 +981,17 @@ function absurd(p,gotG,mine,kg,bottles){
   const bags=(p.bag||0);
   add(bags,'塑膠提袋 '+bags+' 個',
       '攤開排成一列 '+len(bags*40),
-      '一個提袋寬 40 公分。累計 26,773 個，可以排 10.7 公里。');
+      '一個提袋寬 40 公分。累計 28,879 個，可以排 11.6 公里。');
 
   const uten=(p.utensil||0);
   add(uten,'免洗餐具 '+uten+' 件',
       '一個人一天用 3 件，夠用 '+(uten/3).toFixed(1)+' 天',
-      '累計 30,001 件，同一個人可以用 27 年。');
+      '累計 31,585 件，同一個人可以用 28.8 年。');
 
   const cups=(p.cup||0);
   add(cups,'外帶飲料杯 '+cups+' 個',
       '一天一杯手搖，'+cups+' 天份',
-      '累計 14,800 個，一天一杯要喝 40 年。');
+      '累計 15,542 個，一天一杯要喝 42.6 年。');
 
   const cans=(p.can||0);
   add(cans,'鐵鋁罐 '+cans+' 個','疊起來 '+len(cans*12.2)+' 高','一罐高 12.2 公分。');
@@ -981,7 +999,7 @@ function absurd(p,gotG,mine,kg,bottles){
   const wraps=(p.wrap||0);
   add(wraps,'食品包裝袋 '+wraps+' 個',
       '攤平鋪開 '+(wraps*0.06).toFixed(2)+' 平方公尺',
-      '一個包裝袋 20×30 公分。累計 39,476 個，鋪滿 5.6 座籃球場。');
+      '一個包裝袋 20×30 公分。累計 41,957 個，鋪滿 6 座籃球場。');
 
   const glass=(p.glass||0);
   add(glass,'玻璃瓶 '+glass+' 個','約 '+kg(glass*400)+'，一隻手提不太動','一個玻璃瓶約 500 公克。');
@@ -1000,7 +1018,7 @@ function absurd(p,gotG,mine,kg,bottles){
   html+='<div class="wl total"><span class="src">全部加起來</span>'+
     '<span class="out">'+mine+' 件，約 '+kg(gotG)+
     (bottles>=1?'，等於 '+bottles+' 支空寶特瓶':'')+'</span>'+
-    '<span class="foot">真實淨溪平均每人每場撿 1.69 公斤（22.60 公噸 ÷ 13,401 人次）。'+
+    '<span class="foot">真實淨溪平均每人每場撿 1.69 公斤（23.92 公噸 ÷ 14,118 人次）。'+
     (gotG>=1690?'你已經超過平均了。':'還差一段，但方向是對的。')+'</span></div>';
   return html;
 }
@@ -1023,6 +1041,46 @@ function endPlay(){
       x:26+Math.random()*(W-52),y:Math.min(it.y,ZONE.playBot),d:Math.random()*6.3});});
   items=[];critters=[];
 }
+/* ---- 產生成績分享圖（畫在離線畫布上，供手機原生分享附圖） ---- */
+function makeShareImage(mine,missedCount,cb){
+  const w=1080,h=1080,c=document.createElement('canvas');
+  c.width=w;c.height=h;const g=c.getContext('2d');
+  // 底：溪水漸層
+  const bg=g.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,'#EAF6F0');bg.addColorStop(.45,'#DCEFF2');bg.addColorStop(1,'#F4F9F6');
+  g.fillStyle=bg;g.fillRect(0,0,w,h);
+  g.fillStyle='#93C46B';g.fillRect(0,300,w,90);
+  const wa=g.createLinearGradient(0,390,0,720);
+  wa.addColorStop(0,'#3FA6B2');wa.addColorStop(.55,'#5FC3CB');wa.addColorStop(1,'#93DDE1');
+  g.fillStyle=wa;g.fillRect(0,390,w,330);
+  g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=4;
+  for(let i=0;i<5;i++){g.beginPath();
+    for(let x=0;x<=w;x+=10)g.lineTo(x,430+i*62+Math.sin(x*.012+i)*7);g.stroke();}
+  g.fillStyle='#DCD6C6';g.fillRect(0,720,w,88);
+  g.fillStyle='#96C560';g.fillRect(0,808,w,h-808);
+  // 水面上的垃圾（暫時把繪圖環境切到離線畫布，重用遊戲既有的向量圖形）
+  const real=ctx;ctx=g;
+  [['pet',180,470,62,.3],['bag',420,430,60,-.2],['cup',700,500,56,.15],
+   ['butt',300,640,34,.5],['wrap',880,450,58,.4],['butt',620,660,34,-.3],
+   ['straw',480,600,54,.2],['butt',860,655,34,.1]].forEach(a=>{
+    g.save();g.translate(a[1],a[2]);g.rotate(a[4]);drawItem(a[0],a[3]);g.restore();
+  });
+  ctx=real;
+  // 文字
+  g.textAlign='center';
+  g.fillStyle='#5E9B4A';g.font='900 30px "Noto Sans TC",sans-serif';
+  g.fillText('荒野保護協會台中分會',w/2,110);
+  g.fillStyle='#123A33';g.font='900 74px "Noto Serif TC",serif';
+  g.fillText('60 秒筏子溪淨溪挑戰',w/2,206);
+  g.fillStyle='#1E7F8C';g.font='900 150px "Space Mono",monospace';
+  g.fillText(String(mine),w/2,930);
+  g.fillStyle='#123A33';g.font='700 40px "Noto Sans TC",sans-serif';
+  g.fillText('我撿起了 '+mine+' 件垃圾',w/2,985);
+  g.fillStyle='#3E6B62';g.font='400 32px "Noto Sans TC",sans-serif';
+  g.fillText('漏掉 '+missedCount+' 件　換你來挑戰',w/2,1032);
+  c.toBlob(function(b){cb(b);},'image/png');
+}
+
 let shareTxt='',shareBody='';
 function showResult(){
   state='result';document.body.classList.remove('playing');audioBtns.hidden=true;
@@ -1039,7 +1097,7 @@ function showResult(){
   document.getElementById('rBody').textContent=
     (missedCount>mine
      ? '垃圾漂得比你撿得快，而且撿起來還會分裂、掉蓋子、碎成好幾片。真正的淨溪也是這樣——你以為撿完了，蹲下去才發現底下還有一層。'
-     : '你算是眼力好又手快的。實際在河灘上，這個數量大概要蹲上一小時，因為菸蒂得一支一支撿。')
+     : '你算是眼力好又手快的。實際在河灘上，這個數量大概要蹲上一小時，因為垃圾得一個一個撿。')
     +'　同一時間，岸上那個人丟了 '+theirs+' 件。';
   document.getElementById('rRate').textContent=
     '命中率 '+hitRate+'%　|　撿起約 '+kg(gotG)+'　漏掉約 '+kg(missedG);
@@ -1060,7 +1118,8 @@ function showResult(){
   if(!chart.dataset.built){
     chart.innerHTML=TYPES.map((t,i)=>'<div class="bar-row'+(i===0?' top':'')+'">'+
       '<div class="bar-name">'+t.name+'</div><div class="bar-track">'+
-      '<div class="bar-fill" data-w="'+(t.pct/30.27*100)+'"></div></div>'+
+      '<div class="bar-fill" data-w="'+(t.pct/(29.67*1.15)*100)+'"></div>'+
+      '<div class="bar-num'+(t.pct/(29.67*1.15)*100>=55?' inside':'')+'">'+t.real.toLocaleString()+'</div></div>'+
       '<div class="bar-pct">'+t.pct.toFixed(2)+'%</div></div>').join('');
     chart.dataset.built='1';
   }
@@ -1088,12 +1147,27 @@ document.getElementById('btnAgain').addEventListener('click',startGame);
 document.getElementById('btnFb').addEventListener('click',()=>track('click_fb',{}));
 document.getElementById('btnShare').addEventListener('click',async function(){
   const b=this;track('click_share',{picked:mine});
+  const orig='分享我的成績';
+  b.textContent='產生分享圖…';
   try{
-    // 桌機沒有原生分享面板，直接複製成績文字
-    if(navigator.share&&IS_MOBILE){await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody});return;}
+    const blob=await new Promise(res=>{
+      try{makeShareImage(mine,missedCount,res);}catch(e){res(null);}
+      setTimeout(()=>res(null),3000);
+    });
+    if(blob&&navigator.canShare){
+      const file=new File([blob],'淨溪挑戰成績.png',{type:'image/png'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody,files:[file]});
+        b.textContent=orig;return;
+      }
+    }
+    if(navigator.share){await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody});b.textContent=orig;return;}
     await navigator.clipboard.writeText(shareTxt);
-    b.textContent='已複製成績，貼上就能發文';setTimeout(()=>b.textContent='分享我的成績',2200);
-  }catch(err){b.textContent='複製失敗，請長按選取';setTimeout(()=>b.textContent='分享我的成績',2200);}
+    b.textContent='已複製成績，貼上就能發文';setTimeout(()=>b.textContent=orig,2200);
+  }catch(err){
+    if(err&&err.name==='AbortError'){b.textContent=orig;return;}   // 使用者自己取消分享
+    b.textContent='分享失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
+  }
 });
 document.getElementById('btnCopyUrl').addEventListener('click',async function(){
   const b=this;track('click_copy_url',{});

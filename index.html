@@ -223,7 +223,7 @@ body.is-mobile .mobile-only{display:block}
 .imgmodal[hidden]{display:none}
 .im-inner{width:100%;max-width:340px;text-align:center}
 .im-tip{color:#fff;font-size:15px;font-weight:700;line-height:1.7;margin-bottom:10px}
-.im-sub{display:block;font-size:12.5px;font-weight:400;color:#BFE3E7;margin-top:4px}
+.im-tip[hidden]{display:none}
 .im-pic{width:100%;border-radius:12px;display:block;box-shadow:0 8px 28px rgba(0,0,0,.45);
   -webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto;pointer-events:auto}
 .im-url{margin-top:10px;font-family:var(--f-num);font-size:12px;color:#BFE3E7;
@@ -1424,18 +1424,12 @@ function showImgModal(dataUrl){
   const pic=document.getElementById('imPic');
   pic.style.display='';
   pic.src=dataUrl;
-  document.getElementById('imTip').innerHTML=
-    '截圖這張'+(eggBird?'認證書':'成績圖')+'，分享到限動或群組<br>'+
-    '<span class="im-sub">網址已印在圖上，朋友掃到就能玩</span>';
+  const tip=document.getElementById('imTip');
+  tip.textContent='';tip.hidden=true;
   const box=document.getElementById('imUrl');
   box.style.cssText='';
   box.textContent='';
-  const hint=document.getElementById('imHint');
-  if(IS_INAPP){
-    hint.innerHTML='存不起來？點右上角 <b>⋯</b> 選<b>「用預設瀏覽器開啟」</b>，'+
-      '再玩一次就能直接分享，也能長按存圖。';
-    hint.hidden=false;
-  }else hint.hidden=true;
+  document.getElementById('imHint').hidden=true;
   m.hidden=false;
 }
 document.getElementById('imClose').addEventListener('click',function(){
@@ -1536,7 +1530,9 @@ function showInviteText(){
   const m=document.getElementById('imgModal');
   document.getElementById('imPic').removeAttribute('src');
   document.getElementById('imPic').style.display='none';
-  document.getElementById('imTip').textContent='長按下面文字 → 全選複製 → 貼到聊天室';
+  const tip=document.getElementById('imTip');
+  tip.hidden=false;
+  tip.textContent='長按下面文字 → 全選複製 → 貼到聊天室';
   document.getElementById('imHint').hidden=true;
   const box=document.getElementById('imUrl');
   box.textContent=inviteText;
